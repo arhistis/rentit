@@ -6,7 +6,6 @@ const fs = require('fs');
 var Product = require('../models/product');
 var Image = require('../models/image');
 
-var config = require('../config');
 var requireAuthenticated = require('../require-authenticated');
 
 // Get all products
@@ -100,6 +99,10 @@ router.post('/:productId/images', (req, res) => {
 
     form.uploadDir = 'uploads';
     form.keepExtensions = true;
+
+    if (!fs.existsSync(form.uploadDir)) {
+        fs.mkdirSync(form.uploadDir, 0744);
+    }
 
     form.parse(req, (err, fields, files) => {
         if (err) {
