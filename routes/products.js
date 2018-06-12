@@ -1,12 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const formidable = require('formidable');
-const fs = require('fs');
+const cloudinary = require('cloudinary');
+const argv = require('yargs').argv;
 
 var Product = require('../models/product');
 var Image = require('../models/image');
 
 var requireAuthenticated = require('../require-authenticated');
+
+var configFile = argv.config ? '../config.' + argv.config : '../config';
+var config = require(configFile); // get our config file
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || config.cloudinary_cloud_name,
+    api_key: process.env.CLOUDINARY_API_KEY || config.cloudinary_api_key,
+    api_secret: process.env.CLOUDINARY_API_SECRET || config.cloudinary_api_secret,
+})
 
 // Get all products
 router.get('/', (req, res, next) => {
@@ -97,60 +107,49 @@ router.post('/delete', (req, res) => {
 router.post('/:productId/images', (req, res) => {
     const form = new formidable.IncomingForm();
 
-    form.uploadDir = 'uploads';
     form.keepExtensions = true;
-
-    if (!fs.existsSync(form.uploadDir)) {
-        fs.mkdirSync(form.uploadDir, 0744);
-    }
 
     form.parse(req, (err, fields, files) => {
         if (err) {
             res.status(403).json({ success: false, msg: err });
         } else {
-            var newImage = new Image({
-                name: files.file.name,
-                path: files.file.path,
-                type: files.file.type,
-                size: files.file.size
-            });
 
-            Product.findByIdAndUpdate(req.params.productId, {
-                $push: { images: newImage }
-            }, { 'new': true }, (err, product) => {
-                if (err) {
-                    res.status(403).json({ success: false, msg: err });
+            cloudinary.uploader.upload(files.file.path, (resp) => {
+                if (resp.error) {
+                    res.status(403).json({ success: false, msg: 'Failed to upload image to cloudinary.' });
+                } else {
+                    var newImage = new Image({
+                        url: resp.url,
+                    });
+
+                    Product.findByIdAndUpdate(req.params.productId, {
+                        $push: { images: newImage }
+                    }, { 'new': true }, (err, product) => {
+                        if (err) {
+                            res.status(403).json({ success: false, msg: err });
+                        }
+                        else {
+                            res.json(product);
+                        }
+                    });
                 }
-                else {
-                    res.json(product);
-                }
-            });
+            }, { width: 400, height: 400, crop: "fill" });
         }
     });
 });
 
 // Delete image
 router.delete('/:productId/images/:imageId', (req, res) => {
-    Product.findById(req.params.productId, (err, product) => {
+    Product.findByIdAndUpdate(req.params.productId, {
+        $pull: { images: { _id: req.params.imageId} }
+    }, { 'new': true }, (err, product) => {
         if (err) {
             res.status(403).json({ success: false, msg: err });
-        } else {
-            const image = product.images.id(req.params.imageId);
-            fs.unlinkSync(image.path);
-            if (err) {
-                res.status(403).json({ success: false, msg: err });
-            } else {
-                product.images.pull(req.params.imageId);
-                product.save((err, product) => {
-                    if (err) {
-                        res.status(403).json({ success: false, msg: err });
-                    } else {
-                        res.json(product);
-                    }
-                })
-            }
         }
-    })
+        else {
+            res.json(product);
+        }
+    });
 });
 
 module.exports = router;
