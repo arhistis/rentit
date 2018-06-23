@@ -39,7 +39,6 @@ router.post('/', (req, res, next) => {
         category: req.body.category,
         description: req.body.description,
         quantity: req.body.quantity,
-        available: req.body.available,
         price: req.body.price,
         pricePer: req.body.pricePer
     });
@@ -62,7 +61,6 @@ router.put('/update/:id', (req, res, next) => {
         category: req.body.category,
         description: req.body.description,
         quantity: req.body.quantity,
-        available: req.body.available,
         price: req.body.price,
         pricePer: req.body.pricePer,
         images: req.body.images

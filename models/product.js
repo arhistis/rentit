@@ -17,16 +17,12 @@ module.exports = mongoose.model('Product', new Schema({
     category: {
         type: String,
         required: true,
-        enum: ['Electronics', 'Tools', 'Gardening']
+        enum: ['Electronics', 'Tools', 'Equipments', 'Sports', 'Furniture', 'Automobiles', 'Apartments']
     },
     description: {
         type: String
     },
     quantity: {
-        type: Number,
-        required: true
-    },
-    available: {
         type: Number,
         required: true
     },

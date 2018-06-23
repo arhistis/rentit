@@ -43,13 +43,13 @@ router.post('/register', (req, res, next) => {
                             res.status(403).json({ success: false, msg: err.errors.password.message });
                     } else {
                         const payload = {
-                            _id: user._id
+                            _id: user._id // acest obiect va fi criptat si trimis ca token
                         };
-                        var token = jwt.sign(payload, config.secret, {
-                            expiresIn: 60 * 60 * 24 // expires in 24 hours
+                        var token = jwt.sign(payload, config.secret, {  // config.secret este cheia secreta
+                            expiresIn: 60 * 60 * 24 // expira in 24 ore
                         });
 
-                        // return the information including token as JSON
+                        // returneaza informatia incluzand token-ul in JSON
                         res.json({
                             success: true,
                             message: 'User registred! Here is your token',
@@ -86,24 +86,27 @@ router.post('/authenticate', (req, res, next) => {
             res.status(403).send({ success: false, msg: 'Authentication failed. User not found.' });
         } else if (user) {
 
+            // parola este tinuta criptata in baza de date
+            // pentru verificarea parolei, criptez parola introdusa si o compar cu cea din baza de date
             bcrypt.compare(req.body.password, user.password, function (err, match) {
 
-                // check if password matches
+                // verific daca cele doua parole coincid
                 if (!match) {
                     res.status(403).send({ success: false, msg: 'Authentication failed. Wrong password.'});
                 } else {
 
-                    // if user is found and password is right
-                    // create a token with only our given payload
-                    // we don't want to pass in the entire user since that has the password
+                    // daca userul exista si parola este corecta
+                    // creaza un token in care este continut id-ul userului
                     const payload = {
                         _id: user._id
                     };
+
+                    // cripteaza tokenul folosind cheia secreta din config.secret
                     var token = jwt.sign(payload, config.secret, {
-                        expiresIn: 60 * 60 * 24 // expires in 24 hours
+                        expiresIn: 60 * 60 * 24 // expira in 24 ore
                     });
 
-                    // return the information including token as JSON
+                    // returneaza tokenul ca JSON
                     res.json({
                         success: true,
                         message: 'Enjoy your token!',
