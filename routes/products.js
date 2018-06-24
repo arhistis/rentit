@@ -32,6 +32,13 @@ router.get('/owner:id', (req, res, next) => {
     });
 });
 
+// Get all products by category name
+router.get('/category:category', (req, res, next) => {
+    Product.find({category: req.params.category}, function (err, products) {
+        res.json(products);
+    });
+});
+
 // Get a product by id
 router.get('/:id', (req, res, next) => {
     Product.find({ _id: req.params.id}, function (err, product) {
@@ -73,7 +80,7 @@ router.put('/update/:id', (req, res, next) => {
         quantity: req.body.quantity,
         price: req.body.price,
         pricePer: req.body.pricePer,
-        images: req.body.images
+        // images: req.body.images
     }, (err, product) => {
         if (err) {
             res.status(403).json({ success: false, msg: err });
