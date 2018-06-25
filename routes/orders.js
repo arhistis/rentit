@@ -49,6 +49,7 @@ router.use(requireAuthenticated);
 // Create
 router.post('/', (req, res, next) => {
     let newOrder = new Order({
+        index: req.body.index,
         _rentorId: req.body._rentorId,
         _clientId: req.body._clientId,
         address: req.body.address,
@@ -84,6 +85,7 @@ router.post('/', (req, res, next) => {
 router.put('/update/:id', (req, res, next) => {
 
     Order.update({ _id: req.params.id }, {
+        index: req.body.index,
         _rentorId: req.body._rentorId,
         _clientId: req.body._clientId,
         address: req.body.address,
@@ -113,6 +115,5 @@ router.put('/update/:id', (req, res, next) => {
         }
     });
 });
-
 
 module.exports = router;

@@ -6,6 +6,10 @@ mongoose.connect(config.database);
 var Schema = mongoose.Schema;
 
 var OrderSchema = mongoose.Schema({
+    index: {
+        type: Number,
+        required: true
+    },
     _rentorId: {
         type: Schema.ObjectId,
         ref: 'User'
