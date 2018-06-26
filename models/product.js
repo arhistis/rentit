@@ -35,7 +35,11 @@ module.exports = mongoose.model('Product', new Schema({
         required: true,
         enum: ['Hour', 'Day', 'Week', 'Month']
     },
-    images: [Image.schema]
+    images: [Image.schema],
+    rating: {
+        type: Number,
+        required: true
+    }
 }));
 
 module.exports.createProduct = function (newProduct, callback) {

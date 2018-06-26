@@ -104,8 +104,8 @@ module.exports = mongoose.model('Order', OrderSchema);
 
 module.exports.createOrder = function (newOrder, callback) {
 
-    mongoose.model('Counter').find({_id: newOrder._rentorId}).then(function(counter){
-        console.log(counter.count);
-    });
+    // mongoose.model('Counter').find({_id: newOrder._rentorId}).then(function(counter){
+    //     console.log(counter.count);
+    // });
     newOrder.save(callback);
 }

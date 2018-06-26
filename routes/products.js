@@ -63,7 +63,8 @@ router.post('/', (req, res, next) => {
                 quantity: req.body.quantity,
                 price: req.body.price,
                 pricePer: req.body.pricePer,
-                images: tempProduct.images
+                images: tempProduct.images, 
+                rating: req.body.rating,
             });
             Product.createProduct(newProduct, (err, product) => {
                 if (err) {
@@ -88,6 +89,7 @@ router.put('/update/:id', (req, res, next) => {
         quantity: req.body.quantity,
         price: req.body.price,
         pricePer: req.body.pricePer,
+        rating: req.body.rating,
     }, (err, product) => {
         if (err) {
             res.status(403).json({ success: false, msg: err });
