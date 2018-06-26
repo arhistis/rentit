@@ -136,7 +136,6 @@ router.get('/', (req,res,next) => {
 });
 
 router.get('/me', (req, res) => {
-    console.log(req.decoded._id);
     User.findOne({
         _id: req.decoded._id
     }, function (err, user) {

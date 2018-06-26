@@ -80,7 +80,6 @@ router.put('/update/:id', (req, res, next) => {
         quantity: req.body.quantity,
         price: req.body.price,
         pricePer: req.body.pricePer,
-        // images: req.body.images
     }, (err, product) => {
         if (err) {
             res.status(403).json({ success: false, msg: err });
