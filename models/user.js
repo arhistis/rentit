@@ -73,7 +73,7 @@ module.exports = mongoose.model('User', new Schema({
         validate: emailValidator
     },
     telephone: {
-        type: Number,
+        type: String,
         required: false,
         validate: phoneValidator
     },

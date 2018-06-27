@@ -17,6 +17,7 @@ router.post('/register', (req, res, next) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
+        telephone: req.body.telephone,
         password: req.body.password
     });
 
@@ -39,6 +40,8 @@ router.post('/register', (req, res, next) => {
                             res.status(403).json({ success: false, msg: err.errors.lastName.message });
                         else if (err.errors.email)
                             res.status(403).json({ success: false, msg: err.errors.email.message });
+                        else if (err.errors.telephone)
+                            res.status(403).json({ success: false, msg: err.errors.telephone.message });
                         else if (err.errors.password)
                             res.status(403).json({ success: false, msg: err.errors.password.message });
                     } else {
